@@ -1,7 +1,9 @@
 
 HPC-CLUST v1.2 (5 February 2015)
+=======================================================
 by Joao F. Matias Rodrigues and Christian von Mering
 Institute of Molecular Life Sciences, University of Zurich, Switzerland
+
 Matias Rodrigues JF, Mering C von. HPC-CLUST: Distributed hierarchical clustering for very large sets of nucleotide sequences. Bioinformatics. 2013.
 
 -
@@ -10,14 +12,17 @@ Matias Rodrigues JF, Mering C von. HPC-CLUST: Distributed hierarchical clusterin
 
 1. Introduction
 2. Installation
-2. HPC-CLUST(-MPI) usage instructions
-3. File output
- * a) The merge log file
- * b) Obtaining OTU/clusters from the merge results
- * c) Obtaining OTU representatives
-4. FAQ
-5. Acknowledgments
-6. History
+   * 2.1. Linux/Unix/MacOSX
+3. HPC-CLUST(-MPI) usage instructions
+   * 3.1. USING HPC-CLUST
+   * 3.2. USING HPC-CLUST-MPI
+4. File output
+ * 4.1. The merge log file
+ * 4.2. Obtaining OTU/clusters from the merge results
+ * 4.3. Obtaining OTU representatives
+5. FAQ
+6. Acknowledgments
+7. Version history
 
 -
 
@@ -48,11 +53,12 @@ linkage clusterings can be computed in a single go with little overhead.
 
 For bugs and more information contact: Joao F. Matias Rodrigues <joao.rodrigues@imls.uzh.ch>
 
+-
 
 #2. INSTALLATION
 
 
-##2.1 Linux/Unix/MacOSX
+##2.1. Linux/Unix/MacOSX
 
 To install HPC-CLUST on a linux, unix, or MacOSX simply type:
 
@@ -71,9 +77,8 @@ This would install the program binaries to a directory usr/bin inside
 your home directory (i.e.: $HOME/usr/bin/hpc-clust), after you type
 the command "make install".
 
-
-2. HPC-CLUST, HPC-CLUST-MPI usage instructions
-=================================================
+-
+#3. HPC-CLUST, HPC-CLUST-MPI usage instructions
 
 Two programs are provided in the HPC-CLUST package.
 
@@ -86,8 +91,7 @@ to automatically setup the communication between master and slave processes runn
 on multiple computing nodes.
 
 
-a) USING HPC-CLUST
-=================================================
+##3.1. USING HPC-CLUST
 
 To use HPC-CLUST you must first prepare your alignment file. You can accomplish this
 using the INFERNAL aligner (http://infernal.janelia.org/) which aligns all sequences
@@ -100,61 +104,58 @@ It detects automatically the format based on the first character. It switches to
 character is a '>'.
 
 An example of non-interleaved stockholm format is: 
-SEQUENCE_ID1      ---ATGCAT---GCATGCATGC----... ...AT--AATT
-SEQUENCE_ID2      ---ATCCAC---GCACGCATGC-AT-... ...AT--ATAA
-...
-...
+
+    SEQUENCE_ID1      ---ATGCAT---GCATGCATGC----... ...AT--AATT...
+    SEQUENCE_ID2      ---ATCCAC---GCACGCATGC-AT-... ...AT--ATAA...
 
 An example of aligned fasta format is:
->SEQUENCE_ID1
----ATGCAT---GCATGCATGC----... ...AT--AATT
->SEQUENCE_ID2
----ATCCAC---GCACGCATGC-AT-... ...AT--ATAA
-...
+
+    >SEQUENCE_ID1
+    ---ATGCAT---GCATGCATGC----... ...AT--AATT
+    >SEQUENCE_ID2 
+    ---ATCCAC---GCACGCATGC-AT-... ...AT--ATAA...
 
 
 An example of how to call the INFERNAL aligner such that it produces a file in the
 right format is:
-cmalign -1 --sub --matchonly -o alignedseqs.sto bacterial-ssu-model.cm unalignedseqs.fasta
 
-This would produce a file with the aligned sequences "alignedseqs.sto", using the
-"bacterial-ssu-model.cm" from the unaligned sequences file "unalignedseqs.fasta"
+    cmalign -1 --sub --matchonly -o alignedseqs.sto bacterial-ssu-model.cm unalignedseqs.fasta
 
-If the input sequences can be found in the file "alignedseqs.sto". Then to cluster the
+This would produce a file with the aligned sequences `alignedseqs.sto`, using the
+`bacterial-ssu-model.cm` from the unaligned sequences file `unalignedseqs.fasta`.
+
+If the input sequences can be found in the file `alignedseqs.sto`. Then to cluster the
 sequences one simply has to run the following command:
 
-hpc-clust -sl true alignedseqs.sto
+    hpc-clust -sl true alignedseqs.sto
 
 This will cluster the sequences using single-linkage clustering. The output will be written
-to the file "alignedseqs.sto.sl"
+to the file `alignedseqs.sto.sl`
 
 To run all linkage methods at once:
 
-hpc-clust -sl true -cl true -al true alignedseqs.sto
+    hpc-clust -sl true -cl true -al true alignedseqs.sto
 
 In this case, the single, complete and average linkage clusterings will be written to the
-"alignedseqs.sto.sl", "alignedseqs.sto.cl", and "alignedseqs.sto.al", respectively.
+`alignedseqs.sto.sl`, `alignedseqs.sto.cl`, and `alignedseqs.sto.al`, respectively.
 
-You can change the number of cpus that hpc-clust should use with the -ncpus <no_cpus> argument.
-The name of the output file using the -ofile <output_filename> argument.
-The threshold at which distances should be kept is specified using the -t <threshold> argument.
-The lower this value, the more distances will be stored, and the lower the threshold until which
-the clustering can proceed. However, the more distances are stored, the higher the memory 
-requirement.
+### Options
 
+* You can change the number of cpus that hpc-clust should use with the `-ncpus <no_cpus>` argument.
+* The name of the output file using the `-ofile <output_filename>` argument.
+* The threshold at which distances should be kept is specified using the `-t <threshold>` argument. The lower this value, the more distances will be stored, and the lower the threshold until which the clustering can proceed. However, the more distances are stored, the higher the memory requirement.
 
-
-b) USING HPC-CLUST-MPI
-=================================================
+-
+##3.2. USING HPC-CLUST-MPI
 
 To run the distributed version of HPC-CLUST, one needs to have the MPI library installed
 before installing HPC-CLUST. If the MPI library is already set up, running HPC-CLUST-MPI
 can be accomplished simply with:
 
-mpirun -n 10 hpc-clust-mpi -sl true alignedseqs.sto
+    mpirun -n 10 hpc-clust-mpi -sl true alignedseqs.sto
 
 This will start 10 instances of hpc-clust-mpi, (1 master + 9 slaves) and perform single linkage
-clustering on the "alignedseqs.sto" file. The results can be found in the "alignedseqs.sto.sl"
+clustering on the `alignedseqs.sto` file. The results can be found in the `alignedseqs.sto.sl`
 file as explained in the "USING HPC-CLUST" section above.
 
 The MPI version of HPC-CLUST is best used in conjunction with a queuing system such as the
@@ -164,22 +165,21 @@ separate machine it can make use of the combined memory of all the machines.
 The exact command for submitting a job to the queuing system will depend on your local cluster
 configuration. An example of the command to submit a job to run hpc-clust-mpi on 10 nodes would be:
 
-qsub -b y -cwd -pe orte 10 mpirun -n 10 hpc-clust-mpi -sl true alignedseqs.sto
-
+    qsub -b y -cwd -pe orte 10 mpirun -n 10 hpc-clust-mpi -sl true alignedseqs.sto
 
 The speed of the computation and memory usage can be further optimized by having more than one
 thread per node, in this manner the sequence data is shared between the threads. You can
-increase the number of threads to use in each node by specifying the -nthreads <number_threads>
+increase the number of threads to use in each node by specifying the `-nthreads <number_threads>`
 argument to hpc-clust-mpi.
 
-3. FILE OUTPUT
-=================================================
+-
+#4. FILE OUTPUT
 
-a) THE MERGE LOG FILE
-=================================================
+##4.1. THE MERGE LOG FILE
 
-# seqsfile: aligned-archaea-seqs.sto
-# OTU_count Merge_distance Merged_OTU_id1 Merged_OTU_id2
+````
+seqsfile: aligned-archaea-seqs.sto
+OTU_count Merge_distance Merged_OTU_id1 Merged_OTU_id2
 51094 1.0 37 38
 51093 1.0 37 12176
 51092 1.0 37 33214
@@ -192,6 +192,7 @@ a) THE MERGE LOG FILE
 51085 1.0 42 2750
 51084 1.0 42 2751
 ...
+````
 
 In the merge file output, each line indicates a merging event. For each merge event, the
 number of OTUs existing after the merge, the identity distance at which the merge occurred,
@@ -199,72 +200,69 @@ and the OTU ids are shown. When a merge event occurs, the new OTU will have the 
 as the smallest OTU id merged. For example, if OTUs' 37 and 12176 are merged, the new OTU
 will have id 37.
 
+-
 
-b) OBTAINING OTUS/CLUSTERS FROM THE MERGE RESULTS
-=================================================
+##4.2. OBTAINING OTUS/CLUSTERS FROM THE MERGE RESULTS
 
 Once the merge result files (.sl,.cl,.al) have been computed, you can produce the clusters
-at different thresholds by running hpc-clust with the -makeotus option.
+at different thresholds by running hpc-clust with the `-makeotus` option.
 
-hpc-clust -makeotus alignedseqs.sto alignedseqs.sto.sl 0.97
+    hpc-clust -makeotus alignedseqs.sto alignedseqs.sto.sl 0.97
 
 Would generate the clusters produced at the 97% identity threshold from the single linkage
-merge file "alignedseqs.sto.sl".
+merge file `alignedseqs.sto.sl`.
 
 It is possible to obtain the OTU list in a format compatible with MOTHUR by using
-the "-makeotus_mothur" option
+the `-makeotus_mothur` option
 
-hpc-clust -makeotus_mothur alignedseqs.sto alignedseqs.sto.sl 0.97
+    hpc-clust -makeotus_mothur alignedseqs.sto alignedseqs.sto.sl 0.97
 
+-
+##4.3. OBTAINING OTU REPRESENTATIVES
 
-c) OBTAINING OTU REPRESENTATIVES
-=================================================
 
 After clustering and producing an OTU file at a certain threshold it is possible to
 obtain a fasta file containing a set of representatives for each OTU by using the
--makereps option.
+`-makereps` option.
 
-hpc-clust -makereps alignedseqs.sto alignedseqs.sto.sl.0.97.otu
+    hpc-clust -makereps alignedseqs.sto alignedseqs.sto.sl.0.97.otu
 
 For each OTU, the sequence chosen to be the representative is the one having the smallest
 average distance to all other sequences in the OTU.
 
-4. FAQ
-=================================================
+-
+#5. FAQ
+
 Frequently asked questions and other documentation can be found at
 http://meringlab.org/software/hpc-clust/faq.html
 
-
-5. ACKNOWLEDGMENTS
-=================================================
+-
+#6. ACKNOWLEDGMENTS
 
 Sebastian Schmidt
 
+-
+#7. VERSION HISTORY
 
+**1.2.0 (5 February 2015)**
+* Average linkage computation now is calculated until the specified threshold
+* Added `-makeotus`, `-makeotus_mothur`, and `-makerefs` options to hpc-clust
 
+**1.1.1 (21 October 2014)**
+* Fixed bug in `make-otus.sh` when using fasta files
+* Added `make-otus-mothur.sh` to create otu list files in mothur format
 
-=================================================
-6. HISTORY
+**1.1.0 (5 June 2014)**
+* Added test suite
+* Fixed bug in mpi version introducted after changing to long indices
 
-1.2.0 (5 February 2015)
-- Average linkage computation now is calculated until the specified threshold
-- Added -makeotus, -makeotus_mothur, and -makerefs options to hpc-clust
+**1.0.2 (23 May 2014)**
+* Added support for aligned fasta format (automatically detects format based on whether the first character is '>')
+* Added support for computing the clustering of more than 2 million sequences (`--enable-longind` option for configure command)
+* Fixed issue with eutils not compiling with some gnu compiler versions (push_back error in `ebasicarray.h`)
 
-1.1.1 (21 October 2014)
-- Fixed bug in make-otus.sh when using fasta files
-- Added make-otus-mothur.sh to create otu list files in mothur format
-
-1.1.0 (5 June 2014)
-- Added test suite
-- Fixed bug in mpi version introducted after changing to long indices
-
-1.0.2 (23 May 2014)
-- Added support for aligned fasta format (automatically detects format based on whether the first character is '>')
-- Added support for computing the clustering of more than 2 million sequences (--enable-longind option for configure command)
-- Fixed issue with eutils not compiling with some gnu compiler versions (push_back error in ebasicarray.h)
-
-1.0.1 (May 2014)
-- Several bugs fixed in optimized distance calculation functions, sorting function (only with -O optimization), distributed computing (when distance threshold is strict or sparse databases)
+**1.0.1 (May 2014)**
+* Several bugs fixed in optimized distance calculation functions, sorting function (only with -O optimization), distributed computing (when distance threshold is strict or sparse databases)
 
 
 
