@@ -3,34 +3,35 @@ HPC-CLUST v1.2 (5 February 2015)
 by Joao F. Matias Rodrigues and Christian von Mering
 Institute of Molecular Life Sciences, University of Zurich, Switzerland
 Matias Rodrigues JF, Mering C von. HPC-CLUST: Distributed hierarchical clustering for very large sets of nucleotide sequences. Bioinformatics. 2013.
-=================================================
-Table of contents
 
-1. Installation
+-
+
+#Table of contents
+
+1. Introduction
+2. Installation
 2. HPC-CLUST(-MPI) usage instructions
 3. File output
- a) The merge log file
- b) Obtaining OTU/clusters from the merge results
- c) Obtaining OTU representatives
+ * a) The merge log file
+ * b) Obtaining OTU/clusters from the merge results
+ * c) Obtaining OTU representatives
 4. FAQ
 5. Acknowledgments
 6. History
 
 -
 
+#1. Introduction
+
 HPC-CLUST is a set of tools designed to cluster large numbers (1 million or more)
 pre-aligned nucleotide sequences. HPC-CLUST performs the clustering of sequences
 using the Hierarchical Clustering Algorithm (HCA). There are currently three different
 cluster metrics implemented: single-linkage, complete-linkage, and average-linkage.
 There are currently 4 sequence distance functions implemented, these are:
-- identity
-    gap-gap counting as match
-- nogap
-    gap-gap being ignored
-- nogap-single
-    like nogap, but consecutive gap-nogap's count as a single mismatch
-- tamura
-    distance is calculated with the knowledge that transitions are more likely than
+* identity: gap-gap counting as match
+* nogap:    gap-gap being ignored
+* nogap-single:  like nogap, but consecutive gap-nogap's count as a single mismatch
+* tamura:   distance is calculated with the knowledge that transitions are more likely than
    transversions
 
 One advantage that HCA has over other algorithms is that instead of producing only the
@@ -44,26 +45,27 @@ Another feature of the way HPC-CLUST is implemented is that the single, complete
 linkage clusterings can be computed in a single go with little overhead.
 
 -
+
 For bugs and more information contact: Joao F. Matias Rodrigues <joao.rodrigues@imls.uzh.ch>
 
 
-1. INSTALLATION
-=================================================
+#2. INSTALLATION
 
-i) Linux/Unix/MacOSX
+
+##2.1 Linux/Unix/MacOSX
 
 To install HPC-CLUST on a linux, unix, or MacOSX simply type:
 
-./configure
-make
-make install
+    ./configure
+    make
+    make install
 
 In the directory where you unpacked the package contents.
 Alternatively, if you want the program to be installed to another
-location instead of the default system wide /usr/local/ directory,
-you can change the ./configure command to:
+location instead of the default system wide `/usr/local/` directory,
+you can change the `./configure` command to:
 
-./configure --prefix=$HOME/usr
+    ./configure --prefix=$HOME/usr
 
 This would install the program binaries to a directory usr/bin inside
 your home directory (i.e.: $HOME/usr/bin/hpc-clust), after you type
